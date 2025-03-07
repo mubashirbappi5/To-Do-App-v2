@@ -2,7 +2,7 @@ import { Link, useLocation } from "react-router-dom";
 
 const Sidebar = () => {
   const location = useLocation();
-
+const user = true;
   const isActive = (path) => {
     return location.pathname === path;
   };
@@ -58,10 +58,18 @@ const Sidebar = () => {
       </nav>
 
       <div className="p-6 border-t border-gray-200">
-        <button className="w-full flex items-center justify-center px-4 py-2 text-red-600 hover:bg-red-50 hover:text-red-700 rounded-md transition-colors duration-200">
+        {
+          user ? (
+            <Link to="/login">Login</Link>
+        ):
+        (
+          <button className="w-full flex items-center justify-center px-4 py-2 text-red-600 hover:bg-red-50 hover:text-red-700 rounded-md transition-colors duration-200">
           <i className="fas fa-sign-out-alt w-5"></i>
           <span className="ml-2">Logout</span>
         </button>
+        )
+        }
+        
       </div>
     </div>
   );
