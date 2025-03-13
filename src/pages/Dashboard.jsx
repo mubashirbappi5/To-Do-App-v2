@@ -17,7 +17,7 @@ const Dashboard = () => {
                 Todo List
               </Link>
               <Link
-                to="/settings"
+                to="/dashboard/settings"
                 className="px-4 py-2 rounded-lg text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
               >
                 Settings

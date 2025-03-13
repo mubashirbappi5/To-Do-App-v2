@@ -1,6 +1,7 @@
 import { useGSAP } from "@gsap/react";
 import React, { useState, useEffect, useRef } from "react";
 import { gsap } from "gsap";
+import { Link } from "react-router-dom";
 
 // Register GSAP plugins
 gsap.registerEffect({
@@ -293,11 +294,32 @@ const Home = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 py-8 px-4">
-      <div className="max-w-4xl mx-auto">
-        <h1 className="text-4xl font-bold mb-8 text-center bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600">
-          Todo List
-        </h1>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 pb-8 ">
+      <header className="bg-white shadow-sm">
+        <div className="w-full mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-6 space-y-4 sm:space-y-0">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
+            Create Todo 
+            </h1>
+            <nav className="flex flex-wrap gap-2">
+              <Link
+                to="/dashboard"
+                className="px-4 py-2 rounded-lg text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+              >
+                 Dashboard
+              </Link>
+              <Link
+                to="/dashboard/settings"
+                className="px-4 py-2 rounded-lg text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+              >
+                Settings
+              </Link>
+            </nav>
+          </div>
+        </div>
+      </header>
+      <div className="max-w-4xl mx-auto mt-10">
+        
 
         <form
           ref={formRef}
