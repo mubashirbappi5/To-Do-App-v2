@@ -2,6 +2,21 @@ import { useGSAP } from "@gsap/react";
 import React, { useState, useEffect, useRef } from "react";
 import { gsap } from "gsap";
 
+// Register GSAP plugins
+gsap.registerEffect({
+  name: "fadeInUp",
+  effect: (targets, config) => {
+    return gsap.from(targets, {
+      duration: config.duration || 1,
+      y: 50,
+      opacity: 0,
+      stagger: config.stagger || 0.2,
+      ease: "power2.out",
+    });
+  },
+  defaults: { duration: 1 },
+});
+
 const Home = () => {
   const [todos, setTodos] = useState([]);
   const [formData, setFormData] = useState({
@@ -14,49 +29,49 @@ const Home = () => {
   const formRef = useRef(null);
   const buttonRef = useRef(null);
   const inputRefs = useRef({});
+  const todoListRef = useRef(null);
 
   // Initialize animations
   useEffect(() => {
-    // Create a timeline for initial animations
-    const tl = gsap.timeline();
+    let ctx = gsap.context(() => {
+      // Create a timeline for initial animations
+      const tl = gsap.timeline();
 
-    // Animate header on load
-    tl.from("h1", {
-      y: -50,
-      opacity: 0,
-      duration: 1,
-      ease: "elastic.out(1, 0.5)",
-    })
-      .from("form", {
-        y: 50,
+      // Animate header on load
+      tl.from("h1", {
+        y: -50,
         opacity: 0,
         duration: 1,
-        ease: "power3.out",
+        ease: "elastic.out(1, 0.5)",
       })
-      .from("form > *", {
-        opacity: 0,
-        y: 20,
-        duration: 0.5,
-        stagger: 0.1,
-        ease: "power2.out",
-      });
+        .from(formRef.current, {
+          y: 50,
+          opacity: 0,
+          duration: 0.8,
+          ease: "power3.out",
+        })
+        .from("form > div > *", {
+          opacity: 0,
+          y: 20,
+          duration: 0.5,
+          stagger: 0.1,
+          ease: "power2.out",
+        });
 
-    // Setup hover animations for form elements
-    const formElements = document.querySelectorAll("input, textarea, select");
-    formElements.forEach((element) => {
-      gsap.set(element, {
-        borderColor: "rgba(229, 231, 235, 1)",
-      });
+      // Setup hover animations for form elements
+      const formElements = formRef.current.querySelectorAll(
+        "input, textarea, select"
+      );
 
-      element.addEventListener("mouseenter", () => {
+      const enterAnimation = (element) => {
         gsap.to(element, {
           borderColor: "rgb(216, 180, 254)",
           duration: 0.3,
           ease: "power2.out",
         });
-      });
+      };
 
-      element.addEventListener("mouseleave", () => {
+      const leaveAnimation = (element) => {
         if (!element.matches(":focus")) {
           gsap.to(element, {
             borderColor: "rgba(229, 231, 235, 1)",
@@ -64,38 +79,65 @@ const Home = () => {
             ease: "power2.out",
           });
         }
+      };
+
+      formElements.forEach((element) => {
+        element.addEventListener("mouseenter", () => enterAnimation(element));
+        element.addEventListener("mouseleave", () => leaveAnimation(element));
       });
+
+      // Setup button hover animation
+      if (buttonRef.current) {
+        buttonRef.current.addEventListener("mouseenter", () => {
+          gsap.to(buttonRef.current, {
+            scale: 1.05,
+            duration: 0.3,
+            ease: "power2.out",
+          });
+        });
+
+        buttonRef.current.addEventListener("mouseleave", () => {
+          gsap.to(buttonRef.current, {
+            scale: 1,
+            duration: 0.3,
+            ease: "power2.out",
+          });
+        });
+      }
+
+      // Cleanup function
+      return () => {
+        formElements.forEach((element) => {
+          element.removeEventListener("mouseenter", () =>
+            enterAnimation(element)
+          );
+          element.removeEventListener("mouseleave", () =>
+            leaveAnimation(element)
+          );
+        });
+        if (buttonRef.current) {
+          buttonRef.current.removeEventListener("mouseenter", () => {});
+          buttonRef.current.removeEventListener("mouseleave", () => {});
+        }
+      };
     });
 
-    // Setup button hover animation
-    if (buttonRef.current) {
-      buttonRef.current.addEventListener("mouseenter", () => {
-        gsap.to(buttonRef.current, {
-          scale: 1.05,
-          duration: 0.3,
-          ease: "power2.out",
-        });
-      });
-
-      buttonRef.current.addEventListener("mouseleave", () => {
-        gsap.to(buttonRef.current, {
-          scale: 1,
-          duration: 0.3,
-          ease: "power2.out",
-        });
-      });
-    }
+    // Cleanup context
+    return () => ctx.revert();
   }, []);
 
+  // Animation for new todos
   useGSAP(() => {
-    // Animate new todos when they are added
-    gsap.from(".todo-item:last-child", {
-      opacity: 0,
-      x: -100,
-      rotation: -5,
-      duration: 0.5,
-      ease: "power3.out",
-    });
+    if (todos.length > 0) {
+      gsap.from(".todo-item:last-child", {
+        opacity: 0,
+        x: -100,
+        rotation: -5,
+        duration: 0.5,
+        ease: "power3.out",
+        clearProps: "all", // Clear properties after animation
+      });
+    }
   }, [todos]);
 
   const handleInputChange = (e) => {
@@ -127,26 +169,31 @@ const Home = () => {
         date: new Date().toISOString().split("T")[0],
       });
 
-      // Animate the form submission
-      const tl = gsap.timeline();
-      tl.to(buttonRef.current, {
-        scale: 1.1,
-        duration: 0.1,
-      })
-        .to(buttonRef.current, {
-          scale: 1,
+      // Animate the form submission with context
+      const ctx = gsap.context(() => {
+        const tl = gsap.timeline();
+        tl.to(buttonRef.current, {
+          scale: 1.1,
           duration: 0.1,
         })
-        .to(formRef.current, {
-          y: -5,
-          duration: 0.2,
-          ease: "power2.out",
-        })
-        .to(formRef.current, {
-          y: 0,
-          duration: 0.2,
-          ease: "bounce.out",
-        });
+          .to(buttonRef.current, {
+            scale: 1,
+            duration: 0.1,
+          })
+          .to(formRef.current, {
+            y: -5,
+            duration: 0.2,
+            ease: "power2.out",
+          })
+          .to(formRef.current, {
+            y: 0,
+            duration: 0.2,
+            ease: "bounce.out",
+          });
+      }, formRef);
+
+      // Cleanup context
+      return () => ctx.revert();
     }
   };
 
@@ -155,37 +202,50 @@ const Home = () => {
       todos.map((todo) => {
         if (todo.id === id) {
           const element = document.querySelector(`#todo-${id}`);
-          const tl = gsap.timeline();
+          const ctx = gsap.context(() => {
+            const tl = gsap.timeline();
 
-          if (!todo.completed) {
-            tl.to(element, {
-              backgroundColor: "#4ade80",
-              color: "white",
-              scale: 1.02,
-              rotation: 1,
-              duration: 0.3,
-              ease: "power2.out",
-            }).to(element.querySelector(".status-badge"), {
-              backgroundColor: "#bbf7d0",
-              color: "#166534",
-              duration: 0.3,
-              ease: "power2.out",
-            });
-          } else {
-            tl.to(element, {
-              backgroundColor: "white",
-              color: "black",
-              scale: 1,
-              rotation: 0,
-              duration: 0.3,
-              ease: "power2.out",
-            }).to(element.querySelector(".status-badge"), {
-              backgroundColor: getStatusBgColor(todo.status),
-              color: getStatusTextColor(todo.status),
-              duration: 0.3,
-              ease: "power2.out",
-            });
-          }
+            if (!todo.completed) {
+              tl.to(element, {
+                backgroundColor: "#4ade80",
+                color: "white",
+                scale: 1.02,
+                rotation: 1,
+                duration: 0.3,
+                ease: "power2.out",
+              }).to(
+                element.querySelector(".status-badge"),
+                {
+                  backgroundColor: "#bbf7d0",
+                  color: "#166534",
+                  duration: 0.3,
+                  ease: "power2.out",
+                },
+                "<"
+              );
+            } else {
+              tl.to(element, {
+                backgroundColor: "white",
+                color: "black",
+                scale: 1,
+                rotation: 0,
+                duration: 0.3,
+                ease: "power2.out",
+              }).to(
+                element.querySelector(".status-badge"),
+                {
+                  backgroundColor: getStatusBgColor(todo.status),
+                  color: getStatusTextColor(todo.status),
+                  duration: 0.3,
+                  ease: "power2.out",
+                },
+                "<"
+              );
+            }
+          });
+
+          // Cleanup context
+          setTimeout(() => ctx.revert(), 1000);
           return { ...todo, completed: !todo.completed };
         }
         return todo;
@@ -298,7 +358,7 @@ const Home = () => {
           </div>
         </form>
 
-        <div className="space-y-4">
+        <div ref={todoListRef} className="space-y-4">
           {todos.map((todo) => (
             <div
               key={todo.id}
