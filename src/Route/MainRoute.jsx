@@ -5,7 +5,7 @@ import Dashboard from './../pages/Dashboard';
 import Settings from './../pages/Settings';
 import Login from './../pages/Login';
 import Register from './../pages/Register';
-
+import TodoList from './../pages/TodoList';
 
 const MainRoute = createBrowserRouter([
   {
@@ -20,6 +20,10 @@ const MainRoute = createBrowserRouter([
       {
         path: "/dashboard",
         element: <Dashboard></Dashboard>,
+      },
+      {
+        path: "/todos",
+        element: <TodoList></TodoList>,
       },
       
       {
