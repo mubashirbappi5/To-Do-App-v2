@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from "react";
-import gsap from "gsap";
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
 
 const categories = [
   { id: 1, name: "Work", color: "#FF6B6B" },
@@ -13,37 +13,6 @@ const TodoList = () => {
   const [todos, setTodos] = useState([]);
   const [newTodo, setNewTodo] = useState("");
   const [selectedCategory, setSelectedCategory] = useState(categories[0]);
-  const categoryRefs = useRef([]);
-  const formRef = useRef(null);
-  const titleRef = useRef(null);
-
-  useEffect(() => {
-    // Initial animations
-    gsap.from(titleRef.current, {
-      y: -50,
-      opacity: 0,
-      duration: 1,
-      ease: "elastic.out(1, 0.5)",
-    });
-
-    gsap.from(formRef.current, {
-      y: 50,
-      opacity: 0,
-      duration: 0.8,
-      delay: 0.3,
-      ease: "back.out(1.7)",
-    });
-
-    categoryRefs.current.forEach((ref, index) => {
-      gsap.from(ref, {
-        x: -100,
-        opacity: 0,
-        duration: 0.5,
-        delay: 0.5 + index * 0.1,
-        ease: "power2.out",
-      });
-    });
-  }, []);
 
   const addTodo = (e) => {
     e.preventDefault();
@@ -57,14 +26,6 @@ const TodoList = () => {
       };
       setTodos([...todos, newTodoItem]);
       setNewTodo("");
-
-      // Animate the new todo
-      gsap.from(`[data-todo="${newTodoItem.id}"]`, {
-        height: 0,
-        opacity: 0,
-        duration: 0.3,
-        ease: "power2.out",
-      });
     }
   };
 
@@ -77,32 +38,39 @@ const TodoList = () => {
   };
 
   const deleteTodo = (id) => {
-    const todoElement = document.querySelector(`[data-todo="${id}"]`);
-    gsap.to(todoElement, {
-      height: 0,
-      opacity: 0,
-      duration: 0.3,
-      ease: "power2.in",
-      onComplete: () => {
-        setTodos(todos.filter((todo) => todo.id !== id));
-      },
-    });
+    setTodos(todos.filter((todo) => todo.id !== id));
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-8">
-      <div className="max-w-4xl mx-auto">
-        <h1
-          ref={titleRef}
-          className="text-4xl font-bold text-gray-800 mb-8 text-center"
-        >
-          My Todo List
-        </h1>
-
+    <div className="min-h-screen bg-gray-100 ">
+      <header className="bg-white shadow-sm">
+        <div className="w-full mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-6 space-y-4 sm:space-y-0">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
+            Todo List
+            </h1>
+            <nav className="flex flex-wrap gap-2">
+              <Link
+                to="/dashboard"
+                className="px-4 py-2 rounded-lg text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+              >
+                 Dashboard
+              </Link>
+              <Link
+                to="/settings"
+                className="px-4 py-2 rounded-lg text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+              >
+                Settings
+              </Link>
+            </nav>
+          </div>
+        </div>
+      </header>
+      <div className="max-w-4xl mx-auto mt-10">
+       
         <form
-          ref={formRef}
           onSubmit={addTodo}
-          className="mb-8 bg-white rounded-lg p-6 shadow-lg transform transition-all duration-300 hover:shadow-xl"
+          className="mb-8 bg-white rounded-lg p-6 shadow-lg transition-all duration-300 hover:shadow-xl"
         >
           <div className="flex gap-4">
             <input
@@ -129,7 +97,7 @@ const TodoList = () => {
             </select>
             <button
               type="submit"
-              className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition-all duration-300 transform hover:scale-105"
+              className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition-all duration-300 hover:shadow-md active:scale-95"
             >
               Add
             </button>
@@ -137,11 +105,10 @@ const TodoList = () => {
         </form>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {categories.map((category, index) => (
+          {categories.map((category) => (
             <div
               key={category.id}
-              ref={(el) => (categoryRefs.current[index] = el)}
-              className="bg-white rounded-lg shadow-lg overflow-hidden transform transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
+              className="bg-white rounded-lg shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
             >
               <div
                 className="p-4 text-white font-semibold"
@@ -149,14 +116,13 @@ const TodoList = () => {
               >
                 {category.name}
               </div>
-              <div className="p-4">
+              <div className="p-4 min-h-[100px]">
                 {todos
                   .filter((todo) => todo.category.id === category.id)
                   .map((todo) => (
                     <div
                       key={todo.id}
-                      data-todo={todo.id}
-                      className="flex items-center gap-3 mb-3 p-3 bg-gray-50 rounded-lg transform transition-all duration-300 hover:shadow-md"
+                      className="flex items-center gap-3 mb-3 p-3 bg-gray-50 rounded-lg transition-all duration-300 hover:shadow-md hover:scale-[1.02]"
                     >
                       <input
                         type="checkbox"
@@ -173,7 +139,7 @@ const TodoList = () => {
                       </span>
                       <button
                         onClick={() => deleteTodo(todo.id)}
-                        className="text-red-500 hover:text-red-700 transition-all duration-300 transform hover:scale-110"
+                        className="text-red-500 hover:text-red-700 transition-all duration-300 hover:scale-110 active:scale-95"
                       >
                         ×
                       </button>
