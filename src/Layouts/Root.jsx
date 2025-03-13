@@ -5,7 +5,7 @@ const Root = () => {
     return (
         <div>
             <div className='grid grid-cols-12'>
-            <div className='col-span-2'>
+            <div className='col-span-2 '>
             <Sidebar ></Sidebar>
             </div>
           

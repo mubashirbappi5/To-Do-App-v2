@@ -8,7 +8,7 @@ const user = true;
   };
 
   return (
-    <div className="h-screen bg-white border-r border-gray-200 flex flex-col fixed">
+    <div className="h-screen bg-white border-r w-64 border-gray-200 flex flex-col fixed">
       <div className="p-6 border-b border-gray-200">
         <h2 className="text-2xl font-semibold text-gray-800">Todo App</h2>
       </div>
