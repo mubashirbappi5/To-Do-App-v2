@@ -9,7 +9,7 @@ const Root = () => {
             <Sidebar ></Sidebar>
             </div>
           
-        <div className='col-span-8'>
+        <div className='col-span-10 '>
         <Outlet></Outlet>
         </div>
             </div>
