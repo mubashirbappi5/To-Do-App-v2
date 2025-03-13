@@ -45,7 +45,7 @@ const Sidebar = () => {
       <div
         className={`${
           isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
-        } lg:translate-x-0 transform transition-transform duration-300 ease-in-out h-screen bg-white border-r w-64 border-gray-200 flex flex-col fixed z-40`}
+        } lg:translate-x-0 transform transition-transform duration-300 ease-in-out h-screen bg-white border-r w-52 border-gray-200 flex flex-col fixed z-40`}
       >
         <div className="p-6 border-b border-gray-200">
           <Link to="/" className="text-2xl font-semibold text-gray-800">
