@@ -2,7 +2,8 @@ import { Link } from "react-router-dom";
 
 const Login = () => {
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-800 p-4">
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-gray-300 via-black
+     to-gray-600 p-4">
       <div className="bg-white backdrop-blur-sm text-black p-8 rounded-2xl shadow-[0_20px_50px_rgba(0,_0,_0,_0.5)] w-96 transform transition-all hover:scale-[1.02]">
         <h2 className="text-3xl font-bold text-center mb-8 bg-gradient-to-r from-gray-900 to-black bg-clip-text text-transparent">
           Welcome Back
