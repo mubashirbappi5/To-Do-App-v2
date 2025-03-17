@@ -97,6 +97,20 @@ const Sidebar = () => {
                 <span className="ml-3">Settings</span>
               </Link>
             </li>
+            <li>
+              <Link
+                to="/profile"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className={`flex items-center px-6 py-3 text-gray-700 hover:bg-gray-100 transition-colors duration-200 ${
+                  isActive("/profile")
+                    ? "bg-gray-100 border-r-4 border-blue-500 text-blue-600"
+                    : ""
+                }`}
+              >
+                <i className="fas fa-user w-5"></i>
+                <span className="ml-3">Profile</span>
+              </Link>
+            </li>
           </ul>
         </nav>
 
